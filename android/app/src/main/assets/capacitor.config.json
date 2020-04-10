@@ -1,7 +1,7 @@
 {
-  "appId": "io.ionic.starter",
+  "appId": "com.personal.ignaciobelmonte",
   "linuxAndroidStudioPath": "/home/nacho/Programas/android-studio/bin/studio.sh",
-  "appName": "qrscanner",
+  "appName": "qScanner",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
@@ -16,9 +16,5 @@
       "SplashScreen": "screen",
       "SplashScreenDelay": "3000"
     }
-  },
-  "server": {
-    "url": "http://192.168.100.102:8100",
-    "cleartext": true
   }
 }

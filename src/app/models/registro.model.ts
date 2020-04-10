@@ -25,6 +25,10 @@ export class Registro{
                 this.type='geo:'
                 this.icon='pin'
                 break;
+            case 'WIFI':
+                this.type='wifi'
+                this.icon='wifi'
+                break ;
             default:
                 this.type='no reconocido'
                 this.icon='create'

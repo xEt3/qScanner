@@ -4,7 +4,7 @@
       Historial
     </ion-title>
 <ion-buttons slot="end">
-  <ion-button (click)="enviarCorreo()" color="primary">
+  <ion-button (click)="enviaHistorialByMultiplataforma()" color="primary">
     <ion-icon slot="start" name="send"></ion-icon>
   </ion-button>
 </ion-buttons>
@@ -21,6 +21,9 @@
       <ion-item-options side="end">
         <ion-item-option (click)="enviarRegistroByMultiplataforma(registro)">
           <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option (click)="eliminarRegistro(registro)" slot="start" color="danger">
+          <ion-icon slot="icon-only" name="trash" ></ion-icon>
         </ion-item-option>
       </ion-item-options>
   

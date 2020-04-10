@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.personal.ignaciobelmonte;
 
 import android.os.Bundle;
 

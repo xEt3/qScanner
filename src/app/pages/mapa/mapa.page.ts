@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Registro } from '../../models/registro.model';
 import { DataLocalService } from '../../services/data-local.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { ShareService } from '../../services/share.service';
 declare var mapboxgl: any;
 
 @Component({
@@ -15,7 +16,7 @@ export class MapaPage implements OnInit, AfterViewInit {
   lat: number;
   lng: number;
 
-  constructor(private route: ActivatedRoute,private dataLocalService:DataLocalService,private iab: InAppBrowser) { }
+  constructor(private route: ActivatedRoute,private iab: InAppBrowser,private shareService:ShareService) { }
 
   ngOnInit() {
     this.textoRegistro = this.route.snapshot.paramMap.get('geo');
@@ -26,6 +27,18 @@ export class MapaPage implements OnInit, AfterViewInit {
 
   }
   ngAfterViewInit() {
+    this.generarMapa();
+  }
+
+  compartir(){
+      this.shareService.enviarRegistroSocialMedia(new Registro('QR_CODE',this.textoRegistro));
+  }
+
+  openStreetView(){
+    this.iab.create(this.shareService.getStreetViewUrl(this.lat,this.lng));
+  }
+
+  private generarMapa(){
     mapboxgl.accessToken = 'pk.eyJ1IjoibmFjaG9icDMiLCJhIjoiY2s4dDZybjBqMDBlbzNlczF6aXJhdmRyMCJ9.hL7fWbjbg6T0EiNOvfNVbQ';
     const map = new mapboxgl.Map({
       style: 'mapbox://styles/mapbox/light-v10',
@@ -93,13 +106,5 @@ export class MapaPage implements OnInit, AfterViewInit {
       );
       
     });
-
-  }
-  compartir(){
-      this.dataLocalService.enviarRegistroSocialMedia(new Registro('QR_CODE',this.textoRegistro));
-  }
-
-  openStreetView(){
-    this.iab.create(this.dataLocalService.getStreetViewUrl(this.lat,this.lng));
   }
 }

@@ -11,6 +11,10 @@
     <param name="onload" value="true"/>
   </feature>
 
+  <feature name="HotSpotPlugin">
+    <param name="android-package" value="de.martinreinhardt.cordova.plugins.hotspot.HotSpotPlugin"/>
+  </feature>
+
   <feature name="InAppBrowser">
     <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser"/>
   </feature>
