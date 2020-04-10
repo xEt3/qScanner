@@ -1,0 +1,9 @@
+{
+  "appId": "io.ionic.starter",
+  "linuxAndroidStudioPath": "/home/nacho/Programas/android-studio/bin/studio.sh",
+  "appName": "qrscanner",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {}
+}

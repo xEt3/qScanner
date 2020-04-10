@@ -1,0 +1,17 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Scan
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+<ion-slides [options]="swiperOpt" > 
+  <ion-slide>
+    <ion-button (click)="scan()" expand="full" fill="outline" shape="round" >
+      Scan
+    </ion-button>
+  </ion-slide>
+</ion-slides>
+</ion-content>
