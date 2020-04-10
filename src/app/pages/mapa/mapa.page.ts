@@ -1,5 +1,8 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Registro } from '../../models/registro.model';
+import { DataLocalService } from '../../services/data-local.service';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 declare var mapboxgl: any;
 
 @Component({
@@ -8,16 +11,15 @@ declare var mapboxgl: any;
   styleUrls: ['./mapa.page.scss'],
 })
 export class MapaPage implements OnInit, AfterViewInit {
-
+  textoRegistro:string;
   lat: number;
   lng: number;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute,private dataLocalService:DataLocalService,private iab: InAppBrowser) { }
 
   ngOnInit() {
-    let geo: any = this.route.snapshot.paramMap.get('geo');
-    console.log(geo);
-    geo = geo.substr(4);
+    this.textoRegistro = this.route.snapshot.paramMap.get('geo');
+    let geo:any = this.textoRegistro.substr(4);
     geo = geo.split(',');
     this.lat = Number(geo[0]);
     this.lng = Number(geo[1]);
@@ -92,5 +94,12 @@ export class MapaPage implements OnInit, AfterViewInit {
       
     });
 
+  }
+  compartir(){
+      this.dataLocalService.enviarRegistroSocialMedia(new Registro('QR_CODE',this.textoRegistro));
+  }
+
+  openStreetView(){
+    this.iab.create(this.dataLocalService.getStreetViewUrl(this.lat,this.lng));
   }
 }

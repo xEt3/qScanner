@@ -5,6 +5,8 @@ import { Storage } from '@ionic/storage';
 import { NavController } from '@ionic/angular';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,7 @@ export class DataLocalService {
 
   guardados: Registro[] = [];
 
-  constructor(private emailComposer: EmailComposer, private file: IonFile, private storage: Storage, private navController: NavController, private iab: InAppBrowser) {
+  constructor(private socialSharing: SocialSharing, private emailComposer: EmailComposer, private file: IonFile, private storage: Storage, private navController: NavController, private iab: InAppBrowser) {
     this.cargarRegistros();
   }
 
@@ -44,7 +46,47 @@ export class DataLocalService {
     }
   }
 
-  enviarCorreo() {
+  async enviarHistorialByCorreo() {
+    const pathFile = await this.crearFicheroCsv('registros.csv');
+    this.eviarFicheroToMail(pathFile, 'belmonteperona@gmail.com');
+  }
+
+  enviarRegistroSocialMedia(registro: Registro) {
+    const url = this.getURLFromRegistro(registro);
+    const message=`Formato: ${registro.format}\nTexto: ${registro.text}\n`
+    const options = {
+      message, // not supported on some apps (Facebook, Instagram)
+      subject: 'Registro scanner', // fi. for email
+      url,
+    };
+    this.socialSharing.shareWithOptions(options).then(console.log);
+  }
+
+  private getURLFromRegistro(resgistro: Registro): string {
+    switch (resgistro.type) {
+      case 'geo:':
+        let geo: any = resgistro.text.substr(4);
+        geo = geo.split(',');
+        const lat = Number(geo[0]);
+        const lng = Number(geo[1]);
+        return this.getStreetViewUrl(lat,lng);
+        case 'http':
+          return resgistro.text;
+      default:
+        return '';
+    }
+  }
+
+  public getStreetViewUrl(lat:number,lng:number){
+    return `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}&heading=-45&pitch=38&fov=80`
+  }
+
+  private async crearFicheroCsv(fileName: string) {
+    const textoCsv: string = this.generarTextoCsv();
+    return await this.crearArchivoFisico(textoCsv, fileName);
+  }
+
+  private generarTextoCsv(): string {
     const arrTmp = [];
     const titulos = 'Tipo, Formato, Creado en, Texto\n';
     arrTmp.push(titulos);
@@ -52,30 +94,31 @@ export class DataLocalService {
       const linea = `${registro.type}, ${registro.format},${registro.created}, ${registro.text.replace(',', ' ')}\n`;
       arrTmp.push(linea);
     })
-    this.crearArchivoFisico(arrTmp.join(' '), 'registros.csv');
+    return arrTmp.join(' ');
   }
 
-  crearArchivoFisico(text: string, nombreFichero: string) {
-    this.file.checkFile(this.file.dataDirectory, nombreFichero).then(existe => {
-      console.log('existe', existe);
-      return this.escribirEnFichero(text, nombreFichero);
-    })
-      .catch(err => {
-        return this.file.createFile(this.file.dataDirectory, nombreFichero, false)
-          .then(creado => { this.escribirEnFichero(text, nombreFichero) })
-          .catch(err2 => { console.log })
-      });
+  private async crearArchivoFisico(text: string, nombreFichero: string) {
+    const existe = await this.file.checkFile(this.file.dataDirectory, nombreFichero)
+    if (existe) {
+      return await this.escribirEnFichero(text, nombreFichero);
+    } else {
+      const isCreado = await this.file.createFile(this.file.dataDirectory, nombreFichero, false);
+      if (isCreado) {
+        return this.escribirEnFichero(text, nombreFichero);
+      }
+    }
   }
 
-  async escribirEnFichero(text: string, nombreFichero: string) {
+  private async escribirEnFichero(text: string, nombreFichero: string) {
     await this.file.writeExistingFile(this.file.dataDirectory, nombreFichero, text).then();
-    const pathFichero = `${this.file.dataDirectory}/${nombreFichero}`;
+    return `${this.file.dataDirectory}/${nombreFichero}`;
+  }
+
+  eviarFicheroToMail(pathFichero: string, mail: string) {
     this.emailComposer.isAvailable().then((available: boolean) => {
       if (available) {
         let email = {
-          to: 'peronabelmonte@gmail.com',
-          cc: 'xet3@outlook.es',
-          bcc: ['belmonteperona@gmail.com'],
+          to: mail,
           attachments: [
             pathFichero
           ],
@@ -83,11 +126,23 @@ export class DataLocalService {
           body: 'Backup del historial de archivos',
           isHtml: true
         }
-
         // Send a text message using default options
         this.emailComposer.open(email);
       }
     });
+  }
+
+
+  async compartirHistorialMultiplataforma() {
+    const pathFile = await this.crearFicheroCsv('registros.csv');
+    const options = {
+      message: 'share this', // not supported on some apps (Facebook, Instagram)
+      subject: 'the subject', // fi. for email
+      files: [pathFile],
+    };
+    this.socialSharing.shareWithOptions(options).then(() => {
+      console.log('compartido');
+    }).catch(console.log)
   }
 
 }

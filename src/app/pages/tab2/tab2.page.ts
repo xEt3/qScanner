@@ -15,8 +15,13 @@ export class Tab2Page {
     this.dataLocalService.abrirRegistro(registro);
   }
   
-  enviarCorreo(){
-    this.dataLocalService.enviarCorreo();
-
+  enviaHistorialByMultiplataforma(){
+    this.dataLocalService.compartirHistorialMultiplataforma();
   }
+
+  enviarRegistroByMultiplataforma(registro:Registro){
+    this.dataLocalService.enviarRegistroSocialMedia(registro)
+  }
+
+
 }

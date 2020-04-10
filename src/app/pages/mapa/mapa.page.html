@@ -1,7 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" >
+      <ion-back-button defaultHref="tabs/tab2"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="openStreetView()" #StreetView>
+        <ion-icon slot="start" name="walk-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="compartir()">
+        <ion-icon slot="start" name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 <ion-content class="ion-padding">
   
   
   <div id='map'></div>
-  <ion-back-button defaultHref="tabs/tab2" text="" class="boton-regresar"  icon="close-outline"></ion-back-button>
+
+  
 
 </ion-content>
